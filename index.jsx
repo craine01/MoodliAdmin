@@ -1,630 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Moodli Studio Admin</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { font-family: 'Nunito', 'Quicksand', sans-serif; }
+  .font-display { font-family: 'Fredoka', 'Nunito', sans-serif; }
+  body { background: #FAF9F6; color: #3D3B36; }
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-thumb { background: #E3DECF; border-radius: 999px; }
+  input[type="range"].sage-range { accent-color: #8FBC8F; }
+  .timeline-line::before {
+    content: ""; position: absolute; left: 7px; top: 4px; bottom: 4px; width: 2px; background: #E3DECF;
+  }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+  .fade-in { animation: fadeIn .25s ease-out; }
+</style>
+</head>
+<body class="min-h-screen w-full">
 
-                  <div
-                    className="w-3.5 sm:w-4 rounded-t-lg bg-[#8FBC8F] transition-all hover:brightness-95"
-                    style={{ height: `${(d.revenue / maxChartVal) * 100}%` }}
-                    title={`Revenue: ${peso(d.revenue)}`}
-                  />
-                  <div
-                    className="w-3.5 sm:w-4 rounded-t-lg bg-[#D89B6A] transition-all hover:brightness-95"
-                    style={{ height: `${(d.expense / maxChartVal) * 100}%` }}
-                    title={`Expenses: ${peso(d.expense)}`}
-                  />
-                </div>
-                <span className="text-xs font-medium text-[#9A9689]">{d.month}</span>
-              </div>
-            ))}
-          </div>
-        </Card>
+<div class="flex min-h-screen">
+  <!-- Sidebar backdrop (mobile) -->
+  <div id="sidebar-backdrop" class="fixed inset-0 z-30 bg-black/20 hidden md:hidden"></div>
 
-        {/* Notifications */}
-        <Card className="p-6">
-          <div className="flex items-center gap-2 mb-4">
-            <Bell size={17} className="text-[#B4652E]" />
-            <p className="font-display text-base font-semibold text-[#3D3B36]">Cozy Reminders</p>
-          </div>
-          <div className="space-y-3">
-            {lowStockItems.map((item) => (
-              <div key={item.id} className="flex items-start gap-2.5 rounded-2xl bg-[#FBE7D6] p-3">
-                <AlertTriangle size={16} className="mt-0.5 shrink-0 text-[#B4652E]" />
-                <p className="text-sm text-[#8A5A2E] leading-snug">
-                  Low on <span className="font-semibold">{item.name}</span>! Only {item.stock} {item.unit} left.
-                </p>
-              </div>
-            ))}
-            <div className="flex items-start gap-2.5 rounded-2xl bg-[#E8F0E6] p-3">
-              <Clock size={16} className="mt-0.5 shrink-0 text-[#5F7A5F]" />
-              <p className="text-sm text-[#4E6B4E] leading-snug">Payday is coming up on the 30th — prep the payroll ledger.</p>
-            </div>
-            <div className="flex items-start gap-2.5 rounded-2xl bg-[#E8F0E6] p-3">
-              <Sparkles size={16} className="mt-0.5 shrink-0 text-[#5F7A5F]" />
-              <p className="text-sm text-[#4E6B4E] leading-snug">New Froggy keychain design is ready for review 🐸</p>
-            </div>
-          </div>
-        </Card>
+  <!-- Sidebar -->
+  <aside id="sidebar" class="fixed z-40 md:z-0 md:static top-0 left-0 h-full md:h-auto w-[260px] shrink-0 bg-[#F1EDE2] border-r border-[#E5DFCF] px-4 py-6 flex flex-col -translate-x-full md:translate-x-0 transition-transform duration-300">
+    <div class="flex items-center gap-3 px-2 mb-8">
+      <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#8FBC8F] text-white shadow-sm">
+        <i data-lucide="flower-2" style="width:22px;height:22px;stroke-width:2.2"></i>
+      </div>
+      <div>
+        <p class="font-display text-lg font-bold text-[#3D3B36] leading-none">Moodli</p>
+        <p class="text-[11px] text-[#8A8677] mt-1">Studio Admin</p>
       </div>
     </div>
-  );
-}
 
-/* ------------------------------------------------------------------ */
-/*  Employees Page                                                      */
-/* ------------------------------------------------------------------ */
-function EmployeesPage({ employees, setEmployees }) {
-  const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ name: "", role: "Assembler", rate: "", status: "Pending" });
+    <nav id="sidebar-nav" class="flex-1 space-y-1"></nav>
 
-  const addEmployee = () => {
-    if (!form.name.trim() || !form.rate) return;
-    setEmployees((prev) => [
-      ...prev,
-      { id: uid(), name: form.name.trim(), role: form.role, rate: Number(form.rate), cadence: "/day", status: form.status },
-    ]);
-    setForm({ name: "", role: "Assembler", rate: "", status: "Pending" });
-    setShowForm(false);
-  };
+    <div class="mt-6 rounded-2xl bg-[#E8F0E6] p-4">
+      <p class="text-xs font-semibold text-[#4E6B4E] mb-1 flex items-center gap-1.5">
+        <i data-lucide="leaf" style="width:13px;height:13px"></i> Molding moods,
+      </p>
+      <p class="text-xs text-[#6B8E6B] leading-relaxed">one tiny keychain at a time. 🌿</p>
+    </div>
+  </aside>
 
-  const toggleStatus = (id) => {
-    setEmployees((prev) =>
-      prev.map((e) => (e.id === id ? { ...e, status: e.status === "Paid" ? "Pending" : "Paid" } : e))
-    );
-  };
-
-  const removeEmployee = (id) => setEmployees((prev) => prev.filter((e) => e.id !== id));
-
-  return (
-    <div>
-      <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
-        <SectionTitle icon={Users} title="Employees & Payroll" subtitle="Your little crew keeping Moodli cozy and running." />
-        <PrimaryButton icon={UserPlus} onClick={() => setShowForm((s) => !s)}>
-          {showForm ? "Close" : "Add Employee"}
-        </PrimaryButton>
+  <!-- Main -->
+  <div class="flex-1 min-w-0 flex flex-col">
+    <header class="sticky top-0 z-20 flex items-center gap-3 border-b border-[#EFEAE0] bg-[#FAF9F6]/90 backdrop-blur px-5 py-4">
+      <button id="menu-btn" class="md:hidden text-[#5C5A52]">
+        <i data-lucide="menu" style="width:22px;height:22px"></i>
+      </button>
+      <div class="flex-1 min-w-0">
+        <p class="text-xs text-[#9A9689]">Moodli Studio Admin</p>
+        <p id="header-title" class="font-display text-base font-semibold truncate"></p>
       </div>
+      <div class="hidden sm:flex items-center gap-2 rounded-full border border-[#E3DECF] bg-white px-3.5 py-2 text-sm text-[#9A9689]">
+        <i data-lucide="search" style="width:15px;height:15px"></i>
+        <span class="text-xs">Search…</span>
+      </div>
+      <div class="h-9 w-9 rounded-full bg-[#8FBC8F] text-white flex items-center justify-center font-display font-semibold text-sm shrink-0">M</div>
+    </header>
 
-      {showForm && (
-        <Card className="p-5 mb-5">
-          <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-            <div>
-              <FieldLabel>Name</FieldLabel>
-              <input className={inputCls} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="e.g. Nico Aquino" />
-            </div>
-            <div>
-              <FieldLabel>Role</FieldLabel>
-              <select className={inputCls} value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })}>
-                {["Assembler", "Packer", "Designer", "Quality Checker", "Assistant"].map((r) => (
-                  <option key={r}>{r}</option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <FieldLabel>Rate (₱/day)</FieldLabel>
-              <input type="number" className={inputCls} value={form.rate} onChange={(e) => setForm({ ...form, rate: e.target.value })} placeholder="500" />
-            </div>
-            <div>
-              <FieldLabel>Payment Status</FieldLabel>
-              <select className={inputCls} value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })}>
-                <option>Pending</option>
-                <option>Paid</option>
-              </select>
-            </div>
-          </div>
-          <div className="mt-4 flex justify-end gap-2">
-            <GhostButton onClick={() => setShowForm(false)}>Cancel</GhostButton>
-            <PrimaryButton icon={Check} onClick={addEmployee}>Save Employee</PrimaryButton>
-          </div>
-        </Card>
-      )}
+    <main id="app-main" class="flex-1 p-5 sm:p-7 max-w-[1400px] w-full mx-auto"></main>
+  </div>
+</div>
 
-      <Card className="overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="bg-[#F1EDE2] text-left text-xs font-semibold uppercase tracking-wide text-[#8A8677]">
-                <th className="px-5 py-3">Name</th>
-                <th className="px-5 py-3">Role</th>
-                <th className="px-5 py-3">Sahod Rate</th>
-                <th className="px-5 py-3">Payment Status</th>
-                <th className="px-5 py-3 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {employees.map((emp) => (
-                <tr key={emp.id} className="border-t border-[#EFEAE0] hover:bg-[#FAF9F6] transition-colors">
-                  <td className="px-5 py-3.5 font-medium text-[#3D3B36]">{emp.name}</td>
-                  <td className="px-5 py-3.5 text-[#6B685F]">{emp.role}</td>
-                  <td className="px-5 py-3.5 text-[#6B685F]">{peso(emp.rate)}{emp.cadence}</td>
-                  <td className="px-5 py-3.5">
-                    <button onClick={() => toggleStatus(emp.id)}>
-                      <Badge tone={emp.status === "Paid" ? "sage" : "warn"}>
-                        {emp.status === "Paid" ? <Check size={12} /> : <Clock size={12} />} {emp.status}
-                      </Badge>
-                    </button>
-                  </td>
-                  <td className="px-5 py-3.5 text-right">
-                    <button onClick={() => removeEmployee(emp.id)} className="text-[#B0503F] hover:text-[#8F3F30] transition-colors">
-                      <Trash2 size={16} />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+<script>
+/* ================= Helpers ================= */
+const peso = (n) => "₱" + Number(n || 0).toLocaleString("en-PH", { maximumFractionDigits: 0 });
+const uid = () => Math.random().toString(36).slice(2, 9);
+const todayISO = "2026-07-17";
+const fmtDate = (iso) => {
+  if (!iso || iso === "TBD") return "Date TBD";
+  const d = new Date(iso + "T00:00:00");
+  return d.toLocaleDateString("en-PH", { month: "short", day: "numeric", year: "numeric" });
+};
+const icon = (name, cls = "", extra = "") => `<i data-lucide="${name}" class="${cls}" ${extra}></i>`;
+
+/* ================= Mock Data ================= */
+let state = {
+  page: "home",
+  sidebarOpen: false,
+  showEmployeeForm: false,
+  showEventForm: false,
+  showTxnForm: false,
+  showInventoryForm: false,
+  adoptedGanap: [],
+  employees: [
+    { id: uid(), name: "Isabelle Cruz", role: "Designer", rate: 650, cadence: "/day", status: "Paid" },
+    { id: uid(), name: "Marco Villanueva", role: "Assembler", rate: 550, cadence: "/day", status: "Paid" },
+    { id: uid(), name: "Trisha Ramos", role: "Packer", rate: 500, cadence: "/day", status: "Pending" },
+    { id: uid(), name: "Josh Manalo", role: "Quality Checker", rate: 520, cadence: "/day", status: "Paid" },
+    { id: uid(), name: "Ana Buenaventura", role: "Assistant", rate: 480, cadence: "/day", status: "Pending" },
+  ],
+  events: [
+    { id: uid(), date: "2026-07-19", title: "Weekend Pop-up Market @ Vermosa", type: "Pop-up Market" },
+    { id: uid(), date: "2026-07-22", title: "Acrylic Blanks Restock Delivery", type: "Restock Day" },
+    { id: uid(), date: "2026-07-25", title: "Froggy Collection Production Deadline", type: "Production" },
+    { id: uid(), date: "2026-07-30", title: "Payday Flash Sale Launch", type: "Sales Event" },
+    { id: uid(), date: "2026-08-02", title: "Community Craft Fair Booth", type: "Pop-up Market" },
+  ],
+  transactions: [
+    { id: uid(), type: "income", category: "Keychain Sales", description: "Froggy & Bunny bundle — 24 pcs", amount: 4800, date: "2026-07-10" },
+    { id: uid(), type: "income", category: "Keychain Sales", description: "Pink Pig keychains — 15 pcs", amount: 2250, date: "2026-07-12" },
+    { id: uid(), type: "income", category: "Keychain Sales", description: "Chicks keychains — 30 pcs", amount: 4500, date: "2026-07-15" },
+    { id: uid(), type: "expense", category: "Raw Materials", description: "Acrylic blanks, 200 pcs", amount: 1600, date: "2026-07-08" },
+    { id: uid(), type: "expense", category: "Booth Fee", description: "Vermosa weekend market slot", amount: 800, date: "2026-07-09" },
+    { id: uid(), type: "expense", category: "Shipping Supplies", description: "Bubble mailers + tape", amount: 450, date: "2026-07-11" },
+    { id: uid(), type: "expense", category: "Marketing", description: "IG & TikTok boosted posts", amount: 600, date: "2026-07-14" },
+    { id: uid(), type: "expense", category: "Raw Materials", description: "Keychain rings, 500 pcs", amount: 1000, date: "2026-07-16" },
+  ],
+  inventory: [
+    { id: uid(), name: "Acrylic Blanks", stock: 120, max: 500, unit: "pcs", unitCost: 8 },
+    { id: uid(), name: "Keychain Rings", stock: 800, max: 1000, unit: "pcs", unitCost: 2 },
+    { id: uid(), name: "Charms & Tassels", stock: 60, max: 400, unit: "pcs", unitCost: 6 },
+    { id: uid(), name: "Sticker Paper", stock: 15, max: 50, unit: "sheets", unitCost: 35 },
+    { id: uid(), name: "Packaging Bags", stock: 300, max: 600, unit: "pcs", unitCost: 3 },
+  ],
+  pricing: { acrylic: 25, ring: 5, packaging: 8, labor: 20, margin: 60 },
+};
+
+const chartData = [
+  { month: "Feb", revenue: 9200, expense: 5100 },
+  { month: "Mar", revenue: 10800, expense: 6200 },
+  { month: "Apr", revenue: 8600, expense: 4800 },
+  { month: "May", revenue: 12400, expense: 6900 },
+  { month: "Jun", revenue: 14100, expense: 7300 },
+  { month: "Jul", revenue: 11550, expense: 4450 },
+];
+
+const ganapIdeas = [
+  { id: "g1", tag: "Content Ganap", iconName: "sparkles", title: "Behind-the-Scenes TikTok Day!", desc: "Record a cozy ASMR video packing orders — soft rustling, stamping, and sealing sounds." },
+  { id: "g2", tag: "Sales Event", iconName: "piggy-bank", title: "Payday Flash Sale Prep!", desc: "Create a limited discount voucher for the upcoming 15th/30th payday rush." },
+  { id: "g3", tag: "Product Strategy", iconName: "paw-print", title: "Student Season Trend!", desc: "Design school-bag and backpack friendly keychains for the upcoming school season." },
+];
+
+const NAV_ITEMS = [
+  { key: "home", label: "Overview", icon: "home" },
+  { key: "employees", label: "Employees & Payroll", icon: "users" },
+  { key: "schedule", label: "Weekly Ganap Hub", icon: "calendar-days" },
+  { key: "budget", label: "Kita vs. Gastos", icon: "wallet" },
+  { key: "inventory", label: "Materials & Stock", icon: "boxes" },
+  { key: "pricing", label: "Pricing Calculator", icon: "calculator" },
+];
+
+const TYPE_TONE = { "Pop-up Market": "sage", "Restock Day": "clay", "Production": "rose", "Sales Event": "warn" };
+
+/* ================= Shared UI builders ================= */
+const badge = (text, tone = "sage", ic = null) => {
+  const tones = {
+    sage: "bg-[#E8F0E6] text-[#4E6B4E]",
+    clay: "bg-[#F3E3D3] text-[#9C6B3E]",
+    warn: "bg-[#FBE7D6] text-[#B4652E]",
+    rose: "bg-[#F6E1DE] text-[#B0503F]",
+  };
+  return `<span class="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ${tones[tone]}">${ic ? icon(ic, "", 'style="width:12px;height:12px"') : ""}${text}</span>`;
+};
+
+const sectionTitle = (iconName, title, subtitle) => `
+  <div class="mb-6 flex items-start gap-3">
+    <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#E8F0E6] text-[#5F7A5F] shadow-inner shrink-0">
+      ${icon(iconName, "", 'style="width:20px;height:20px;stroke-width:2.2"')}
+    </div>
+    <div>
+      <h2 class="font-display text-[22px] font-semibold text-[#3D3B36] leading-tight">${title}</h2>
+      ${subtitle ? `<p class="text-sm text-[#7A776E] mt-0.5">${subtitle}</p>` : ""}
+    </div>
+  </div>`;
+
+const primaryBtn = (label, action, ic = null, extraAttrs = "") => `
+  <button data-action="${action}" ${extraAttrs} class="inline-flex items-center gap-1.5 rounded-full bg-[#8FBC8F] px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all hover:bg-[#7CAA7C] hover:shadow-md active:scale-95">
+    ${ic ? icon(ic, "", 'style="width:16px;height:16px"') : ""}${label}
+  </button>`;
+
+const ghostBtn = (label, action) => `
+  <button data-action="${action}" class="inline-flex items-center gap-1.5 rounded-full border border-[#D9D2C2] bg-white px-4 py-2 text-sm font-semibold text-[#5C5A52] transition-all hover:bg-[#FAF9F6] active:scale-95">
+    ${label}
+  </button>`;
+
+const fieldLabel = (text) => `<label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-[#8A8677]">${text}</label>`;
+const inputCls = "w-full rounded-xl border border-[#E3DECF] bg-[#FCFBF8] px-3 py-2 text-sm text-[#3D3B36] outline-none transition focus:border-[#8FBC8F] focus:ring-2 focus:ring-[#8FBC8F]/30";
+
+const stockVine = (pct, low) => `
+  <div class="relative w-full">
+    <div class="h-2.5 w-full rounded-full bg-[#EDEAE0] overflow-hidden">
+      <div class="h-full rounded-full transition-all duration-700 ${low ? "bg-[#D89B6A]" : "bg-[#8FBC8F]"}" style="width:${pct}%"></div>
+    </div>
+    <i data-lucide="leaf" class="absolute -top-[7px] -translate-x-1/2 transition-all duration-700 ${low ? "text-[#B4652E]" : "text-[#5F7A5F]"}" style="left:${pct}%;width:14px;height:14px;stroke-width:2.3"></i>
+  </div>`;
+
+const card = (inner, cls = "") => `<div class="rounded-3xl bg-white/90 border border-[#EAE6DC] shadow-[0_4px_18px_rgba(90,80,60,0.06)] ${cls}">${inner}</div>`;
+
+/* ================= Page renderers ================= */
+function renderHome() {
+  const thisMonth = state.transactions.filter(t => t.date.startsWith("2026-07"));
+  const revenue = thisMonth.filter(t => t.type === "income").reduce((a, t) => a + t.amount, 0);
+  const expenses = thisMonth.filter(t => t.type === "expense").reduce((a, t) => a + t.amount, 0);
+  const netProfit = revenue - expenses;
+  const activeEmployees = state.employees.length;
+  const nextEvent = [...state.events].filter(e => e.date !== "TBD" && e.date >= todayISO).sort((a, b) => a.date.localeCompare(b.date))[0];
+  const lowStockItems = state.inventory.filter(i => i.stock / i.max < 0.3);
+  const maxChartVal = Math.max(...chartData.map(d => Math.max(d.revenue, d.expense)));
+
+  const stats = [
+    { label: "Total Sales This Month", value: peso(revenue), icon: "shopping-bag", tone: "sage" },
+    { label: "Net Profit (Kita)", value: peso(netProfit), icon: "piggy-bank", tone: "clay" },
+    { label: "Active Employees", value: activeEmployees, icon: "users", tone: "sage" },
+    { label: "Next Scheduled Event", value: nextEvent ? nextEvent.title.split(" ").slice(0, 3).join(" ") + "…" : "None yet", sub: nextEvent ? fmtDate(nextEvent.date) : "", icon: "calendar-days", tone: "clay" },
+  ];
+
+  const statsHtml = stats.map(s => card(`
+    <div class="p-5">
+      <div class="flex items-center justify-between mb-3">
+        <div class="flex h-9 w-9 items-center justify-center rounded-xl ${s.tone === "sage" ? "bg-[#E8F0E6] text-[#5F7A5F]" : "bg-[#F3E3D3] text-[#9C6B3E]"}">
+          ${icon(s.icon, "", 'style="width:17px;height:17px"')}
         </div>
-      </Card>
-      <p className="text-xs text-[#9A9689] mt-3">Tap a payment status badge to toggle between Paid and Pending.</p>
-    </div>
-  );
+      </div>
+      <p class="text-xs font-semibold uppercase tracking-wide text-[#9A9689]">${s.label}</p>
+      <p class="mt-1 font-display text-xl font-bold text-[#3D3B36] leading-tight">${s.value}</p>
+      ${s.sub ? `<p class="text-xs text-[#B4652E] font-medium mt-0.5">${s.sub}</p>` : ""}
+    </div>`)).join("");
+
+  const bars = chartData.map(d => `
+    <div class="flex-1 flex flex-col items-center gap-2 h-full justify-end">
+      <div class="flex items-end gap-1 h-full w-full justify-center">
+        <div class="w-3.5 sm:w-4 rounded-t-lg bg-[#8FBC8F] transition-all hover:brightness-95" style="height:${(d.revenue / maxChartVal) * 100}%" title="Revenue: ${peso(d.revenue)}"></div>
+        <div class="w-3.5 sm:w-4 rounded-t-lg bg-[#D89B6A] transition-all hover:brightness-95" style="height:${(d.expense / maxChartVal) * 100}%" title="Expenses: ${peso(d.expense)}"></div>
+      </div>
+      <span class="text-xs font-medium text-[#9A9689]">${d.month}</span>
+    </div>`).join("");
+
+  const lowStockNotifs = lowStockItems.map(item => `
+    <div class="flex items-start gap-2.5 rounded-2xl bg-[#FBE7D6] p-3">
+      ${icon("alert-triangle", "mt-0.5 shrink-0 text-[#B4652E]", 'style="width:16px;height:16px"')}
+      <p class="text-sm text-[#8A5A2E] leading-snug">Low on <span class="font-semibold">${item.name}</span>! Only ${item.stock} ${item.unit} left.</p>
+    </div>`).join("");
+
+  return `
+    ${sectionTitle("home", "Good day, Moodli! 🌿", "Here's how the studio is doing this month.")}
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">${statsHtml}</div>
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-5">
+      ${card(`
+        <div class="p-6">
+          <div class="flex items-center justify-between mb-5">
+            <div>
+              <p class="font-display text-base font-semibold text-[#3D3B36]">Revenue vs. Expenses</p>
+              <p class="text-xs text-[#9A9689]">Last 6 months, in ₱</p>
+            </div>
+            <div class="flex items-center gap-3 text-xs font-medium">
+              <span class="flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-full bg-[#8FBC8F]"></span> Revenue</span>
+              <span class="flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-full bg-[#D89B6A]"></span> Expenses</span>
+            </div>
+          </div>
+          <div class="flex items-end gap-4 h-56 px-1">${bars}</div>
+        </div>`, "xl:col-span-2")}
+      ${card(`
+        <div class="p-6">
+          <div class="flex items-center gap-2 mb-4">
+            ${icon("bell", "text-[#B4652E]", 'style="width:17px;height:17px"')}
+            <p class="font-display text-base font-semibold text-[#3D3B36]">Cozy Reminders</p>
+          </div>
+          <div class="space-y-3">
+            ${lowStockNotifs}
+            <div class="flex items-start gap-2.5 rounded-2xl bg-[#E8F0E6] p-3">
+              ${icon("clock", "mt-0.5 shrink-0 text-[#5F7A5F]", 'style="width:16px;height:16px"')}
+              <p class="text-sm text-[#4E6B4E] leading-snug">Payday is coming up on the 30th — prep the payroll ledger.</p>
+            </div>
+            <div class="flex items-start gap-2.5 rounded-2xl bg-[#E8F0E6] p-3">
+              ${icon("sparkles", "mt-0.5 shrink-0 text-[#5F7A5F]", 'style="width:16px;height:16px"')}
+              <p class="text-sm text-[#4E6B4E] leading-snug">New Froggy keychain design is ready for review 🐸</p>
+            </div>
+          </div>
+        </div>`)}
+    </div>`;
 }
 
-/* ------------------------------------------------------------------ */
-/*  Schedule / Weekly Ganap Page                                        */
-/* ------------------------------------------------------------------ */
-function SchedulePage({ events, setEvents }) {
-  const [showForm, setShowForm] = useState(false);
-  const [adopted, setAdopted] = useState([]);
-  const [form, setForm] = useState({ title: "", date: "", type: "Pop-up Market" });
-
-  const addEvent = () => {
-    if (!form.title.trim() || !form.date) return;
-    setEvents((prev) => [...prev, { id: uid(), title: form.title.trim(), date: form.date, type: form.type }].sort((a, b) => a.date.localeCompare(b.date)));
-    setForm({ title: "", date: "", type: "Pop-up Market" });
-    setShowForm(false);
-  };
-
-  const removeEvent = (id) => setEvents((prev) => prev.filter((e) => e.id !== id));
-
-  const adoptIdea = (idea) => {
-    if (adopted.includes(idea.id)) return;
-    setEvents((prev) => [...prev, { id: uid(), title: idea.title, date: "TBD", type: idea.tag }]);
-    setAdopted((prev) => [...prev, idea.id]);
-  };
-
-  const typeTone = { "Pop-up Market": "sage", "Restock Day": "clay", Production: "rose", "Sales Event": "warn" };
-
-  return (
-    <div>
-      <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
-        <SectionTitle icon={CalendarDays} title="Weekly Ganap Hub" subtitle="Track real events and let Moodli suggest fresh ones." />
-        <PrimaryButton icon={CalendarPlus} onClick={() => setShowForm((s) => !s)}>
-          {showForm ? "Close" : "Add Event"}
-        </PrimaryButton>
+function renderEmployees() {
+  const formHtml = state.showEmployeeForm ? card(`
+    <div class="p-5 fade-in">
+      <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+        <div>${fieldLabel("Name")}<input id="emp-name" class="${inputCls}" placeholder="e.g. Nico Aquino" /></div>
+        <div>${fieldLabel("Role")}<select id="emp-role" class="${inputCls}">
+          ${["Assembler", "Packer", "Designer", "Quality Checker", "Assistant"].map(r => `<option>${r}</option>`).join("")}
+        </select></div>
+        <div>${fieldLabel("Rate (₱/day)")}<input id="emp-rate" type="number" class="${inputCls}" placeholder="500" /></div>
+        <div>${fieldLabel("Payment Status")}<select id="emp-status" class="${inputCls}"><option>Pending</option><option>Paid</option></select></div>
       </div>
-
-      {showForm && (
-        <Card className="p-5 mb-5">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="sm:col-span-1">
-              <FieldLabel>Event Title</FieldLabel>
-              <input className={inputCls} value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="e.g. Restock acrylic blanks" />
-            </div>
-            <div>
-              <FieldLabel>Date</FieldLabel>
-              <input type="date" className={inputCls} value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} />
-            </div>
-            <div>
-              <FieldLabel>Type</FieldLabel>
-              <select className={inputCls} value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })}>
-                {["Pop-up Market", "Restock Day", "Production", "Sales Event"].map((t) => <option key={t}>{t}</option>)}
-              </select>
-            </div>
-          </div>
-          <div className="mt-4 flex justify-end gap-2">
-            <GhostButton onClick={() => setShowForm(false)}>Cancel</GhostButton>
-            <PrimaryButton icon={Check} onClick={addEvent}>Save Event</PrimaryButton>
-          </div>
-        </Card>
-      )}
-
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
-        {/* Timeline */}
-        <Card className="xl:col-span-2 p-6">
-          <p className="font-display text-base font-semibold text-[#3D3B36] mb-5">Upcoming Timeline</p>
-          <div className="relative pl-6 space-y-5 before:absolute before:left-[7px] before:top-1 before:bottom-1 before:w-[2px] before:bg-[#E3DECF]">
-            {events.length === 0 && <p className="text-sm text-[#9A9689]">No events yet — add one above, or adopt a Ganap idea.</p>}
-            {[...events].sort((a, b) => (a.date === "TBD" ? 1 : b.date === "TBD" ? -1 : a.date.localeCompare(b.date))).map((ev) => (
-              <div key={ev.id} className="relative group">
-                <span className="absolute -left-[26px] top-1.5 h-3.5 w-3.5 rounded-full bg-[#8FBC8F] ring-4 ring-[#E8F0E6]" />
-                <div className="flex items-start justify-between gap-3 rounded-2xl bg-[#FAF9F6] border border-[#EFEAE0] p-4">
-                  <div>
-                    <p className="text-xs font-semibold text-[#B4652E] mb-1">{fmtDate(ev.date)}</p>
-                    <p className="text-sm font-medium text-[#3D3B36] leading-snug">{ev.title}</p>
-                    <div className="mt-2"><Badge tone={typeTone[ev.type] || "sage"}>{ev.type}</Badge></div>
-                  </div>
-                  <button onClick={() => removeEvent(ev.id)} className="text-[#C7C2B4] hover:text-[#B0503F] transition-colors shrink-0">
-                    <Trash2 size={15} />
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </Card>
-
-        {/* Ganap Suggestions */}
-        <Card className="p-6">
-          <div className="flex items-center gap-2 mb-1">
-            <Sparkles size={17} className="text-[#B4652E]" />
-            <p className="font-display text-base font-semibold text-[#3D3B36]">Moodli's Weekly Ganap Suggestions</p>
-          </div>
-          <p className="text-xs text-[#9A9689] mb-4">Fresh ideas tailored to a keychain craft studio.</p>
-          <div className="space-y-3">
-            {ganapIdeas.map((idea) => {
-              const isAdopted = adopted.includes(idea.id);
-              return (
-                <div key={idea.id} className="rounded-2xl border border-[#EFEAE0] bg-[#FCFBF8] p-4">
-                  <div className="flex items-center gap-2 mb-1.5">
-                    <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#E8F0E6] text-[#5F7A5F] shrink-0">
-                      <idea.icon size={14} />
-                    </div>
-                    <Badge tone="clay">{idea.tag}</Badge>
-                  </div>
-                  <p className="text-sm font-semibold text-[#3D3B36] leading-snug">{idea.title}</p>
-                  <p className="text-xs text-[#8A8677] mt-1 leading-relaxed">{idea.desc}</p>
-                  <button
-                    onClick={() => adoptIdea(idea)}
-                    disabled={isAdopted}
-                    className={`mt-3 inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all ${
-                      isAdopted
-                        ? "bg-[#E8F0E6] text-[#7CA57C] cursor-default"
-                        : "bg-[#8FBC8F] text-white hover:bg-[#7CAA7C] active:scale-95"
-                    }`}
-                  >
-                    {isAdopted ? <Check size={13} /> : <Plus size={13} />}
-                    {isAdopted ? "Adopted to Schedule" : "Adopt this Idea"}
-                  </button>
-                </div>
-              );
-            })}
-          </div>
-        </Card>
+      <div class="mt-4 flex justify-end gap-2">
+        ${ghostBtn("Cancel", "cancel-employee-form")}
+        ${primaryBtn("Save Employee", "add-employee", "check")}
       </div>
+    </div>`, "mb-5") : "";
+
+  const rows = state.employees.map(emp => `
+    <tr class="border-t border-[#EFEAE0] hover:bg-[#FAF9F6] transition-colors">
+      <td class="px-5 py-3.5 font-medium text-[#3D3B36]">${emp.name}</td>
+      <td class="px-5 py-3.5 text-[#6B685F]">${emp.role}</td>
+      <td class="px-5 py-3.5 text-[#6B685F]">${peso(emp.rate)}${emp.cadence}</td>
+      <td class="px-5 py-3.5">
+        <button data-action="toggle-employee-status" data-id="${emp.id}">
+          ${badge(emp.status, emp.status === "Paid" ? "sage" : "warn", emp.status === "Paid" ? "check" : "clock")}
+        </button>
+      </td>
+      <td class="px-5 py-3.5 text-right">
+        <button data-action="remove-employee" data-id="${emp.id}" class="text-[#B0503F] hover:text-[#8F3F30] transition-colors">
+          ${icon("trash-2", "", 'style="width:16px;height:16px"')}
+        </button>
+      </td>
+    </tr>`).join("");
+
+  return `
+    <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+      ${sectionTitle("users", "Employees & Payroll", "Your little crew keeping Moodli cozy and running.")}
+      ${primaryBtn(state.showEmployeeForm ? "Close" : "Add Employee", "toggle-employee-form", "user-plus")}
     </div>
-  );
+    ${formHtml}
+    ${card(`
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="bg-[#F1EDE2] text-left text-xs font-semibold uppercase tracking-wide text-[#8A8677]">
+              <th class="px-5 py-3">Name</th><th class="px-5 py-3">Role</th><th class="px-5 py-3">Sahod Rate</th>
+              <th class="px-5 py-3">Payment Status</th><th class="px-5 py-3 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>`)}
+    <p class="text-xs text-[#9A9689] mt-3">Tap a payment status badge to toggle between Paid and Pending.</p>`;
 }
 
-/* ------------------------------------------------------------------ */
-/*  Budget Page                                                         */
-/* ------------------------------------------------------------------ */
-function BudgetPage({ transactions, setTransactions }) {
-  const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ type: "income", category: "", description: "", amount: "", date: todayISO });
+function renderSchedule() {
+  const formHtml = state.showEventForm ? card(`
+    <div class="p-5 fade-in">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div>${fieldLabel("Event Title")}<input id="ev-title" class="${inputCls}" placeholder="e.g. Restock acrylic blanks" /></div>
+        <div>${fieldLabel("Date")}<input id="ev-date" type="date" class="${inputCls}" /></div>
+        <div>${fieldLabel("Type")}<select id="ev-type" class="${inputCls}">
+          ${["Pop-up Market", "Restock Day", "Production", "Sales Event"].map(t => `<option>${t}</option>`).join("")}
+        </select></div>
+      </div>
+      <div class="mt-4 flex justify-end gap-2">
+        ${ghostBtn("Cancel", "cancel-event-form")}
+        ${primaryBtn("Save Event", "add-event", "check")}
+      </div>
+    </div>`, "mb-5") : "";
 
-  const totalIncome = transactions.filter((t) => t.type === "income").reduce((a, t) => a + t.amount, 0);
-  const totalExpense = transactions.filter((t) => t.type === "expense").reduce((a, t) => a + t.amount, 0);
+  const sorted = [...state.events].sort((a, b) => (a.date === "TBD" ? 1 : b.date === "TBD" ? -1 : a.date.localeCompare(b.date)));
+  const timeline = sorted.length === 0
+    ? `<p class="text-sm text-[#9A9689]">No events yet — add one above, or adopt a Ganap idea.</p>`
+    : sorted.map(ev => `
+      <div class="relative">
+        <span class="absolute -left-[26px] top-1.5 h-3.5 w-3.5 rounded-full bg-[#8FBC8F] ring-4 ring-[#E8F0E6]"></span>
+        <div class="flex items-start justify-between gap-3 rounded-2xl bg-[#FAF9F6] border border-[#EFEAE0] p-4">
+          <div>
+            <p class="text-xs font-semibold text-[#B4652E] mb-1">${fmtDate(ev.date)}</p>
+            <p class="text-sm font-medium text-[#3D3B36] leading-snug">${ev.title}</p>
+            <div class="mt-2">${badge(ev.type, TYPE_TONE[ev.type] || "sage")}</div>
+          </div>
+          <button data-action="remove-event" data-id="${ev.id}" class="text-[#C7C2B4] hover:text-[#B0503F] transition-colors shrink-0">
+            ${icon("trash-2", "", 'style="width:15px;height:15px"')}
+          </button>
+        </div>
+      </div>`).join("");
+
+  const ideas = ganapIdeas.map(idea => {
+    const isAdopted = state.adoptedGanap.includes(idea.id);
+    return `
+      <div class="rounded-2xl border border-[#EFEAE0] bg-[#FCFBF8] p-4">
+        <div class="flex items-center gap-2 mb-1.5">
+          <div class="flex h-7 w-7 items-center justify-center rounded-lg bg-[#E8F0E6] text-[#5F7A5F] shrink-0">
+            ${icon(idea.iconName, "", 'style="width:14px;height:14px"')}
+          </div>
+          ${badge(idea.tag, "clay")}
+        </div>
+        <p class="text-sm font-semibold text-[#3D3B36] leading-snug">${idea.title}</p>
+        <p class="text-xs text-[#8A8677] mt-1 leading-relaxed">${idea.desc}</p>
+        <button data-action="adopt-idea" data-id="${idea.id}" ${isAdopted ? "disabled" : ""}
+          class="mt-3 inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all ${isAdopted ? "bg-[#E8F0E6] text-[#7CA57C] cursor-default" : "bg-[#8FBC8F] text-white hover:bg-[#7CAA7C] active:scale-95"}">
+          ${icon(isAdopted ? "check" : "plus", "", 'style="width:13px;height:13px"')}
+          ${isAdopted ? "Adopted to Schedule" : "Adopt this Idea"}
+        </button>
+      </div>`;
+  }).join("");
+
+  return `
+    <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+      ${sectionTitle("calendar-days", "Weekly Ganap Hub", "Track real events and let Moodli suggest fresh ones.")}
+      ${primaryBtn(state.showEventForm ? "Close" : "Add Event", "toggle-event-form", "calendar-plus")}
+    </div>
+    ${formHtml}
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-5">
+      ${card(`<div class="p-6">
+        <p class="font-display text-base font-semibold text-[#3D3B36] mb-5">Upcoming Timeline</p>
+        <div class="relative pl-6 space-y-5 timeline-line">${timeline}</div>
+      </div>`, "xl:col-span-2")}
+      ${card(`<div class="p-6">
+        <div class="flex items-center gap-2 mb-1">
+          ${icon("sparkles", "text-[#B4652E]", 'style="width:17px;height:17px"')}
+          <p class="font-display text-base font-semibold text-[#3D3B36]">Moodli's Weekly Ganap Suggestions</p>
+        </div>
+        <p class="text-xs text-[#9A9689] mb-4">Fresh ideas tailored to a keychain craft studio.</p>
+        <div class="space-y-3">${ideas}</div>
+      </div>`)}
+    </div>`;
+}
+
+function renderBudget() {
+  const totalIncome = state.transactions.filter(t => t.type === "income").reduce((a, t) => a + t.amount, 0);
+  const totalExpense = state.transactions.filter(t => t.type === "expense").reduce((a, t) => a + t.amount, 0);
   const netProfit = totalIncome - totalExpense;
 
-  const addTransaction = () => {
-    if (!form.category.trim() || !form.amount) return;
-    setTransactions((prev) => [
-      { id: uid(), type: form.type, category: form.category.trim(), description: form.description.trim(), amount: Number(form.amount), date: form.date },
-      ...prev,
-    ]);
-    setForm({ type: "income", category: "", description: "", amount: "", date: todayISO });
-    setShowForm(false);
-  };
-
-  const removeTransaction = (id) => setTransactions((prev) => prev.filter((t) => t.id !== id));
-
-  return (
-    <div>
-      <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
-        <SectionTitle icon={Wallet} title="Kita vs. Gastos Tracker" subtitle="Log every peso in and out of the studio." />
-        <PrimaryButton icon={Plus} onClick={() => setShowForm((s) => !s)}>
-          {showForm ? "Close" : "Add Entry"}
-        </PrimaryButton>
+  const formHtml = state.showTxnForm ? card(`
+    <div class="p-5 fade-in">
+      <div class="grid grid-cols-1 sm:grid-cols-5 gap-4">
+        <div>${fieldLabel("Type")}<select id="txn-type" class="${inputCls}">
+          <option value="income">Inflow (Kita)</option><option value="expense">Outflow (Gastos)</option>
+        </select></div>
+        <div>${fieldLabel("Category")}<input id="txn-category" class="${inputCls}" placeholder="e.g. Raw Materials" /></div>
+        <div>${fieldLabel("Description")}<input id="txn-description" class="${inputCls}" placeholder="Optional note" /></div>
+        <div>${fieldLabel("Amount (₱)")}<input id="txn-amount" type="number" class="${inputCls}" placeholder="0" /></div>
+        <div>${fieldLabel("Date")}<input id="txn-date" type="date" class="${inputCls}" value="${todayISO}" /></div>
       </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5">
-        <Card className="p-5">
-          <div className="flex items-center gap-2 text-[#5F7A5F] mb-2"><TrendingUp size={16} /><p className="text-xs font-semibold uppercase tracking-wide text-[#9A9689]">Total Kita (Income)</p></div>
-          <p className="font-display text-2xl font-bold text-[#3D3B36]">{peso(totalIncome)}</p>
-        </Card>
-        <Card className="p-5">
-          <div className="flex items-center gap-2 text-[#B4652E] mb-2"><TrendingDown size={16} /><p className="text-xs font-semibold uppercase tracking-wide text-[#9A9689]">Total Gastos (Expenses)</p></div>
-          <p className="font-display text-2xl font-bold text-[#3D3B36]">{peso(totalExpense)}</p>
-        </Card>
-        <Card className="p-5 bg-[#E8F0E6]/60 border-[#D5E5D0]">
-          <div className="flex items-center gap-2 text-[#4E6B4E] mb-2"><DollarSign size={16} /><p className="text-xs font-semibold uppercase tracking-wide text-[#6B8E6B]">Net Profit</p></div>
-          <p className="font-display text-2xl font-bold text-[#3D3B36]">{peso(netProfit)}</p>
-        </Card>
+      <div class="mt-4 flex justify-end gap-2">
+        ${ghostBtn("Cancel", "cancel-txn-form")}
+        ${primaryBtn("Save Entry", "add-txn", "check")}
       </div>
+    </div>`, "mb-5") : "";
 
-      {showForm && (
-        <Card className="p-5 mb-5">
-          <div className="grid grid-cols-1 sm:grid-cols-5 gap-4">
-            <div>
-              <FieldLabel>Type</FieldLabel>
-              <select className={inputCls} value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })}>
-                <option value="income">Inflow (Kita)</option>
-                <option value="expense">Outflow (Gastos)</option>
-              </select>
-            </div>
-            <div>
-              <FieldLabel>Category</FieldLabel>
-              <input className={inputCls} value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} placeholder="e.g. Raw Materials" />
-            </div>
-            <div className="sm:col-span-1">
-              <FieldLabel>Description</FieldLabel>
-              <input className={inputCls} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Optional note" />
-            </div>
-            <div>
-              <FieldLabel>Amount (₱)</FieldLabel>
-              <input type="number" className={inputCls} value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} placeholder="0" />
-            </div>
-            <div>
-              <FieldLabel>Date</FieldLabel>
-              <input type="date" className={inputCls} value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} />
-            </div>
-          </div>
-          <div className="mt-4 flex justify-end gap-2">
-            <GhostButton onClick={() => setShowForm(false)}>Cancel</GhostButton>
-            <PrimaryButton icon={Check} onClick={addTransaction}>Save Entry</PrimaryButton>
-          </div>
-        </Card>
-      )}
+  const rows = state.transactions.map(t => `
+    <tr class="border-t border-[#EFEAE0] hover:bg-[#FAF9F6] transition-colors">
+      <td class="px-5 py-3.5 text-[#6B685F]">${fmtDate(t.date)}</td>
+      <td class="px-5 py-3.5 font-medium text-[#3D3B36]">${t.category}</td>
+      <td class="px-5 py-3.5 text-[#8A8677]">${t.description || "—"}</td>
+      <td class="px-5 py-3.5 text-right font-semibold ${t.type === "income" ? "text-[#5F7A5F]" : "text-[#B4652E]"}">${t.type === "income" ? "+" : "−"}${peso(t.amount)}</td>
+      <td class="px-5 py-3.5 text-right">
+        <button data-action="remove-txn" data-id="${t.id}" class="text-[#C7C2B4] hover:text-[#B0503F] transition-colors">
+          ${icon("trash-2", "", 'style="width:15px;height:15px"')}
+        </button>
+      </td>
+    </tr>`).join("");
 
-      <Card className="overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="bg-[#F1EDE2] text-left text-xs font-semibold uppercase tracking-wide text-[#8A8677]">
-                <th className="px-5 py-3">Date</th>
-                <th className="px-5 py-3">Category</th>
-                <th className="px-5 py-3">Description</th>
-                <th className="px-5 py-3 text-right">Amount</th>
-                <th className="px-5 py-3 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {transactions.map((t) => (
-                <tr key={t.id} className="border-t border-[#EFEAE0] hover:bg-[#FAF9F6] transition-colors">
-                  <td className="px-5 py-3.5 text-[#6B685F]">{fmtDate(t.date)}</td>
-                  <td className="px-5 py-3.5 font-medium text-[#3D3B36]">{t.category}</td>
-                  <td className="px-5 py-3.5 text-[#8A8677]">{t.description || "—"}</td>
-                  <td className={`px-5 py-3.5 text-right font-semibold ${t.type === "income" ? "text-[#5F7A5F]" : "text-[#B4652E]"}`}>
-                    {t.type === "income" ? "+" : "−"}{peso(t.amount)}
-                  </td>
-                  <td className="px-5 py-3.5 text-right">
-                    <button onClick={() => removeTransaction(t.id)} className="text-[#C7C2B4] hover:text-[#B0503F] transition-colors">
-                      <Trash2 size={15} />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+  return `
+    <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+      ${sectionTitle("wallet", "Kita vs. Gastos Tracker", "Log every peso in and out of the studio.")}
+      ${primaryBtn(state.showTxnForm ? "Close" : "Add Entry", "toggle-txn-form", "plus")}
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5">
+      ${card(`<div class="p-5">
+        <div class="flex items-center gap-2 text-[#5F7A5F] mb-2">${icon("trending-up", "", 'style="width:16px;height:16px"')}<p class="text-xs font-semibold uppercase tracking-wide text-[#9A9689]">Total Kita (Income)</p></div>
+        <p class="font-display text-2xl font-bold text-[#3D3B36]">${peso(totalIncome)}</p></div>`)}
+      ${card(`<div class="p-5">
+        <div class="flex items-center gap-2 text-[#B4652E] mb-2">${icon("trending-down", "", 'style="width:16px;height:16px"')}<p class="text-xs font-semibold uppercase tracking-wide text-[#9A9689]">Total Gastos (Expenses)</p></div>
+        <p class="font-display text-2xl font-bold text-[#3D3B36]">${peso(totalExpense)}</p></div>`)}
+      ${card(`<div class="p-5">
+        <div class="flex items-center gap-2 text-[#4E6B4E] mb-2">${icon("dollar-sign", "", 'style="width:16px;height:16px"')}<p class="text-xs font-semibold uppercase tracking-wide text-[#6B8E6B]">Net Profit</p></div>
+        <p class="font-display text-2xl font-bold text-[#3D3B36]">${peso(netProfit)}</p></div>`, "bg-[#E8F0E6]/60 border-[#D5E5D0]")}
+    </div>
+    ${formHtml}
+    ${card(`<div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead><tr class="bg-[#F1EDE2] text-left text-xs font-semibold uppercase tracking-wide text-[#8A8677]">
+          <th class="px-5 py-3">Date</th><th class="px-5 py-3">Category</th><th class="px-5 py-3">Description</th>
+          <th class="px-5 py-3 text-right">Amount</th><th class="px-5 py-3 text-right">Actions</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`)}`;
+}
+
+function renderInventory() {
+  const formHtml = state.showInventoryForm ? card(`
+    <div class="p-5 fade-in">
+      <div class="grid grid-cols-1 sm:grid-cols-5 gap-4">
+        <div>${fieldLabel("Item Name")}<input id="inv-name" class="${inputCls}" placeholder="e.g. Ribbon Spools" /></div>
+        <div>${fieldLabel("Current Stock")}<input id="inv-stock" type="number" class="${inputCls}" placeholder="0" /></div>
+        <div>${fieldLabel("Full Stock Level")}<input id="inv-max" type="number" class="${inputCls}" placeholder="100" /></div>
+        <div>${fieldLabel("Unit")}<input id="inv-unit" class="${inputCls}" placeholder="pcs" /></div>
+        <div>${fieldLabel("Unit Cost (₱)")}<input id="inv-cost" type="number" class="${inputCls}" placeholder="0" /></div>
+      </div>
+      <div class="mt-4 flex justify-end gap-2">
+        ${ghostBtn("Cancel", "cancel-inventory-form")}
+        ${primaryBtn("Save Item", "add-inventory", "check")}
+      </div>
+    </div>`, "mb-5") : "";
+
+  const items = state.inventory.map(item => {
+    const pct = Math.min(100, Math.round((item.stock / item.max) * 100));
+    const low = pct < 30;
+    return card(`<div class="p-5">
+      <div class="flex items-start justify-between mb-3">
+        <div>
+          <p class="font-semibold text-[#3D3B36]">${item.name}</p>
+          <p class="text-xs text-[#9A9689] mt-0.5">${peso(item.unitCost)} / ${item.unit}</p>
         </div>
-      </Card>
+        <div class="flex items-center gap-2">
+          ${low ? badge("Low Stock", "warn", "alert-triangle") : badge("Healthy", "sage")}
+          <button data-action="remove-inventory" data-id="${item.id}" class="text-[#C7C2B4] hover:text-[#B0503F] transition-colors">
+            ${icon("trash-2", "", 'style="width:15px;height:15px"')}
+          </button>
+        </div>
+      </div>
+      ${stockVine(pct, low)}
+      <div class="flex items-center justify-between mt-3 text-xs text-[#9A9689]">
+        <span>${item.stock} ${item.unit} in stock</span><span>${pct}% of ${item.max}</span>
+      </div>
+    </div>`);
+  }).join("");
+
+  return `
+    <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+      ${sectionTitle("boxes", "Raw Materials & Inventory", "Keep an eye on the studio's craft supplies.")}
+      ${primaryBtn(state.showInventoryForm ? "Close" : "Add Item", "toggle-inventory-form", "plus")}
     </div>
-  );
+    ${formHtml}
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">${items}</div>`;
 }
 
-/* ------------------------------------------------------------------ */
-/*  Inventory Page                                                      */
-/* ------------------------------------------------------------------ */
-function InventoryPage({ inventory, setInventory }) {
-  const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ name: "", stock: "", max: "", unit: "pcs", unitCost: "" });
-
-  const addItem = () => {
-    if (!form.name.trim() || !form.stock || !form.max) return;
-    setInventory((prev) => [
-      ...prev,
-      { id: uid(), name: form.name.trim(), stock: Number(form.stock), max: Number(form.max), unit: form.unit, unitCost: Number(form.unitCost || 0) },
-    ]);
-    setForm({ name: "", stock: "", max: "", unit: "pcs", unitCost: "" });
-    setShowForm(false);
-  };
-
-  const removeItem = (id) => setInventory((prev) => prev.filter((i) => i.id !== id));
-
-  return (
-    <div>
-      <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
-        <SectionTitle icon={Boxes} title="Raw Materials & Inventory" subtitle="Keep an eye on the studio's craft supplies." />
-        <PrimaryButton icon={Plus} onClick={() => setShowForm((s) => !s)}>
-          {showForm ? "Close" : "Add Item"}
-        </PrimaryButton>
-      </div>
-
-      {showForm && (
-        <Card className="p-5 mb-5">
-          <div className="grid grid-cols-1 sm:grid-cols-5 gap-4">
-            <div>
-              <FieldLabel>Item Name</FieldLabel>
-              <input className={inputCls} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="e.g. Ribbon Spools" />
-            </div>
-            <div>
-              <FieldLabel>Current Stock</FieldLabel>
-              <input type="number" className={inputCls} value={form.stock} onChange={(e) => setForm({ ...form, stock: e.target.value })} placeholder="0" />
-            </div>
-            <div>
-              <FieldLabel>Full Stock Level</FieldLabel>
-              <input type="number" className={inputCls} value={form.max} onChange={(e) => setForm({ ...form, max: e.target.value })} placeholder="100" />
-            </div>
-            <div>
-              <FieldLabel>Unit</FieldLabel>
-              <input className={inputCls} value={form.unit} onChange={(e) => setForm({ ...form, unit: e.target.value })} placeholder="pcs" />
-            </div>
-            <div>
-              <FieldLabel>Unit Cost (₱)</FieldLabel>
-              <input type="number" className={inputCls} value={form.unitCost} onChange={(e) => setForm({ ...form, unitCost: e.target.value })} placeholder="0" />
-            </div>
-          </div>
-          <div className="mt-4 flex justify-end gap-2">
-            <GhostButton onClick={() => setShowForm(false)}>Cancel</GhostButton>
-            <PrimaryButton icon={Check} onClick={addItem}>Save Item</PrimaryButton>
-          </div>
-        </Card>
-      )}
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {inventory.map((item) => {
-          const pct = Math.min(100, Math.round((item.stock / item.max) * 100));
-          const low = pct < 30;
-          return (
-            <Card key={item.id} className="p-5">
-              <div className="flex items-start justify-between mb-3">
-                <div>
-                  <p className="font-semibold text-[#3D3B36]">{item.name}</p>
-                  <p className="text-xs text-[#9A9689] mt-0.5">{peso(item.unitCost)} / {item.unit}</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  {low ? <Badge tone="warn"><AlertTriangle size={12} /> Low Stock</Badge> : <Badge tone="sage">Healthy</Badge>}
-                  <button onClick={() => removeItem(item.id)} className="text-[#C7C2B4] hover:text-[#B0503F] transition-colors">
-                    <Trash2 size={15} />
-                  </button>
-                </div>
-              </div>
-              <StockVine pct={pct} low={low} />
-              <div className="flex items-center justify-between mt-3 text-xs text-[#9A9689]">
-                <span>{item.stock} {item.unit} in stock</span>
-                <span>{pct}% of {item.max}</span>
-              </div>
-            </Card>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/*  Pricing Calculator Page                                             */
-/* ------------------------------------------------------------------ */
-function PricingPage() {
-  const [acrylic, setAcrylic] = useState(25);
-  const [ring, setRing] = useState(5);
-  const [packaging, setPackaging] = useState(8);
-  const [labor, setLabor] = useState(20);
-  const [margin, setMargin] = useState(60);
-
-  const cost = Number(acrylic || 0) + Number(ring || 0) + Number(packaging || 0) + Number(labor || 0);
-  const price = margin < 100 ? cost / (1 - margin / 100) : cost;
+function renderPricing() {
+  const p = state.pricing;
+  const cost = Number(p.acrylic || 0) + Number(p.ring || 0) + Number(p.packaging || 0) + Number(p.labor || 0);
+  const price = p.margin < 100 ? cost / (1 - p.margin / 100) : cost;
   const profit = price - cost;
 
-  const Field = ({ label, value, setValue, icon: Icon }) => (
-    <div>
-      <FieldLabel>{label}</FieldLabel>
-      <div className="relative">
-        <Icon size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#B7C9B4]" />
-        <input
-          type="number"
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          className={`${inputCls} pl-9`}
-        />
+  const field = (id, label, value, iconName) => `
+    <div>${fieldLabel(label)}
+      <div class="relative">
+        ${icon(iconName, "absolute left-3 top-1/2 -translate-y-1/2 text-[#B7C9B4]", 'style="width:15px;height:15px"')}
+        <input id="${id}" type="number" value="${value}" class="${inputCls} pl-9" />
       </div>
-    </div>
-  );
+    </div>`;
 
-  return (
-    <div>
-      <SectionTitle icon={Calculator} title="COGS & Pricing Calculator" subtitle="Find your cost to make and a healthy retail price." />
-
-      <div className="grid grid-cols-1 xl:grid-cols-5 gap-5">
-        <Card className="xl:col-span-3 p-6">
-          <p className="font-display text-base font-semibold text-[#3D3B36] mb-5">Cost Breakdown</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Field label="Acrylic Blank Cost (₱)" value={acrylic} setValue={setAcrylic} icon={Package} />
-            <Field label="Ring Cost (₱)" value={ring} setValue={setRing} icon={Boxes} />
-            <Field label="Packaging Cost (₱)" value={packaging} setValue={setPackaging} icon={ShoppingBag} />
-            <Field label="Estimated Labor Cost (₱)" value={labor} setValue={setLabor} icon={Users} />
-          </div>
-
-          <div className="mt-6">
-            <div className="flex items-center justify-between mb-1.5">
-              <FieldLabel>Target Margin</FieldLabel>
-              <span className="text-sm font-semibold text-[#5F7A5F]">{margin}%</span>
-            </div>
-            <input
-              type="range"
-              min="10"
-              max="85"
-              value={margin}
-              onChange={(e) => setMargin(Number(e.target.value))}
-              className="w-full accent-[#8FBC8F]"
-            />
-          </div>
-        </Card>
-
-        <Card className="xl:col-span-2 p-6 bg-[#E8F0E6]/60 border-[#D5E5D0] flex flex-col">
-          <p className="font-display text-base font-semibold text-[#3D3B36] mb-5 flex items-center gap-2">
-            <Sparkles size={16} className="text-[#5F7A5F]" /> Suggested Pricing
-          </p>
-          <div className="space-y-4 flex-1">
-            <div className="rounded-2xl bg-white/70 p-4">
-              <p className="text-xs font-semibold uppercase tracking-wide text-[#8A8677]">Cost to Make</p>
-              <p className="font-display text-2xl font-bold text-[#3D3B36] mt-1">{peso(cost)}</p>
-            </div>
-            <div className="rounded-2xl bg-white p-4 border-2 border-[#8FBC8F]">
-              <p className="text-xs font-semibold uppercase tracking-wide text-[#5F7A5F]">Recommended Retail Price</p>
-              <p className="font-display text-3xl font-bold text-[#3D3B36] mt-1">{peso(price)}</p>
-            </div>
-            <div className="rounded-2xl bg-white/70 p-4">
-              <p className="text-xs font-semibold uppercase tracking-wide text-[#8A8677]">Profit per Piece</p>
-              <p className="font-display text-xl font-bold text-[#4E6B4E] mt-1">{peso(profit)}</p>
-            </div>
-          </div>
-          <p className="text-xs text-[#6B8E6B] mt-4 leading-relaxed">
-            Formula: Retail Price = Cost to Make ÷ (1 − Margin). Adjust the slider to explore different margins.
-          </p>
-        </Card>
-      </div>
-    </div>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/*  App Shell                                                           */
-/* ------------------------------------------------------------------ */
-export default function MoodliDashboard() {
-  const [page, setPage] = useState("home");
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [employees, setEmployees] = useState(initialEmployees);
-  const [events, setEvents] = useState(initialEvents);
-  const [transactions, setTransactions] = useState(initialTransactions);
-  const [inventory, setInventory] = useState(initialInventory);
-
-  const activeLabel = NAV_ITEMS.find((n) => n.key === page)?.label || "";
-
-  return (
-    <div className="min-h-screen w-full bg-[#FAF9F6] text-[#3D3B36]" style={{ fontFamily: "'Nunito', 'Quicksand', sans-serif" }}>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;500;600;700&display=swap');
-        .font-display { font-family: 'Fredoka', 'Nunito', sans-serif; }
-      `}</style>
-
-      <div className="flex min-h-screen">
-        <Sidebar page={page} setPage={setPage} open={sidebarOpen} setOpen={setSidebarOpen} />
-
-        <div className="flex-1 min-w-0 flex flex-col">
-          {/* Top bar */}
-          <header className="sticky top-0 z-20 flex items-center gap-3 border-b border-[#EFEAE0] bg-[#FAF9F6]/90 backdrop-blur px-5 py-4">
-            <button onClick={() => setSidebarOpen(true)} className="md:hidden text-[#5C5A52]">
-              <Menu size={22} />
-            </button>
-            <div className="flex-1 min-w-0">
-              <p className="text-xs text-[#9A9689]">Moodli Studio Admin</p>
-              <p className="font-display text-base font-semibold truncate">{activeLabel}</p>
-            </div>
-            <div className="hidden sm:flex items-center gap-2 rounded-full border border-[#E3DECF] bg-white px-3.5 py-2 text-sm text-[#9A9689]">
-              <Search size={15} />
-              <span className="text-xs">Search…</span>
-            </div>
-            <div className="h-9 w-9 rounded-full bg-[#8FBC8F] text-white flex items-center justify-center font-display font-semibold text-sm shrink-0">
-              M
-            </div>
-          </header>
-
-          <main className="flex-1 p-5 sm:p-7 max-w-[1400px] w-full mx-auto">
-            {page === "home" && <Overview transactions={transactions} employees={employees} events={events} inventory={inventory} />}
-            {page === "employees" && <EmployeesPage employees={employees} setEmployees={setEmployees} />}
-            {page === "schedule" && <SchedulePage events={events} setEvents={setEvents} />}
-            {page === "budget" && <BudgetPage transactions={transactions} setTransactions={setTransactions} />}
-            {page === "inventory" && <InventoryPage inventory={inventory} setInventory={setInventory} />}
-            {page === "pricing" && <PricingPage />}
-          </main>
+  return `
+    ${sectionTitle("calculator", "COGS & Pricing Calculator", "Find your cost to make and a healthy retail price.")}
+    <div class="grid grid-cols-1 xl:grid-cols-5 gap-5">
+      ${card(`<div class="p-6">
+        <p class="font-display text-base font-semibold text-[#3D3B36] mb-5">Cost Breakdown</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          ${field("price-acrylic", "Acrylic Blank Cost (₱)", p.acrylic, "package")}
+          ${field("price-ring", "Ring Cost (₱)", p.ring, "boxes")}
+          ${field("price-packaging", "Packaging Cost (₱)", p.packaging, "shopping-bag")}
+          ${field("price-labor", "Estimated Labor Cost (₱)", p.labor, "users")}
         </div>
-      </div>
-    </div>
-  );
+        <div class="mt-6">
+          <div class="flex items-center justify-between mb-1.5">
+            ${fieldLabel("Target Margin")}
+            <span id="margin-display" class="text-sm font-semibold text-[#5F7A5F]">${p.margin}%</span>
+          </div>
+          <input id="price-margin" type="range" min="10" max="85" value="${p.margin}" class="w-full sage-range" />
+        </div>
+      </div>`, "xl:col-span-3")}
+      ${card(`<div class="p-6 flex flex-col">
+        <p class="font-display text-base font-semibold text-[#3D3B36] mb-5 flex items-center gap-2">
+          ${icon("sparkles", "text-[#5F7A5F]", 'style="width:16px;height:16px"')} Suggested Pricing
+        </p>
+        <div class="space-y-4 flex-1">
+          <div class="rounded-2xl bg-white/70 p-4">
+            <p class="text-xs font-semibold uppercase tracking-wide text-[#8A8677]">Cost to Make</p>
+            <p id="price-cost" class="font-display text-2xl font-bold text-[#3D3B36] mt-1">${peso(cost)}</p>
+          </div>
+          <div class="rounded-2xl bg-white p-4 border-2 border-[#8FBC8F]">
+            <p class="text-xs font-semibold uppercase tracking-wide text-[#5F7A5F]">Recommended Retail Price</p>
+            <p id="price-retail" class="font-display text-3xl font-bold text-[#3D3B36] mt-1">${peso(price)}</p>
+          </div>
+          <div class="rounded-2xl bg-white/70 p-4">
+            <p class="text-xs font-semibold uppercase tracking-wide text-[#8A8677]">Profit per Piece</p>
+            <p id="price-profit" class="font-display text-xl font-bold text-[#4E6B4E] mt-1">${peso(profit)}</p>
+          </div>
+        </div>
+        <p class="text-xs text-[#6B8E6B] mt-4 leading-relaxed">Formula: Retail Price = Cost to Make ÷ (1 − Margin). Adjust the slider to explore different margins.</p>
+      </div>`, "xl:col-span-2 bg-[#E8F0E6]/60 border-[#D5E5D0]")}
+    </div>`;
 }
+
+const PAGE_RENDERERS = {
+  home: renderHome, employees: renderEmployees, schedule: renderSchedule,
+  budget: renderBudget, inventory: renderInventory, pricing: renderPricing,
+};
+
+/* ================= Core render ================= */
+function render() {
+  // Sidebar nav
+  document.getElementById("sidebar-nav").innerHTML = NAV_ITEMS.map(item => {
+    const active = state.page === item.key;
+    return `<button data-action="go-page" data-id="${item.key}"
+      class="group flex w-full items-center gap-3 rounded-2xl px-3.5 py-2.5 text-sm font-medium transition-all ${active ? "bg-[#8FBC8F] text-white shadow-sm" : "text-[#5C5A52] hover:bg-[#E8F0E6]"}">
+      ${icon(item.icon, active ? "text-white" : "text-[#7CA57C]", 'style="width:18px;height:18px;stroke-width:2.2"')}
+      <span class="text-left leading-tight">${item.label}</span>
+      ${active ? icon("chevron-right", "ml-auto", 'style="width:15px;height:15px"') : ""}
+    </button>`;
+  }).join("");
+
+  document.getElementById("header-title").textContent = NAV_ITEMS.find(n => n.key === state.page)?.label || "";
+  document.getElementById("app-main").innerHTML = `<div class="fade-in">${PAGE_RENDERERS[state.page]()}</div>`;
+
+  // Sidebar open/close (mobile)
+  const sidebar = document.getElementById("sidebar");
+  const backdrop = document.getElementById("sidebar-backdrop");
+  if (state.sidebarOpen) {
+    sidebar.classList.remove("-translate-x-full");
+    backdrop.classList.remove("hidden");
+  } else {
+    sidebar.classList.add("-translate-x-full");
+    backdrop.classList.add("hidden");
+  }
+
+  if (window.lucide) lucide.createIcons();
+  attachDynamicListeners();
+}
+
+/* ================= Dynamic (non-delegated) listeners ================= */
+function attachDynamicListeners() {
+  if (state.page === "pricing") {
+    const ids = ["price-acrylic", "price-ring", "price-packaging", "price-labor"];
+    const keys = { "price-acrylic": "acrylic", "price-ring": "ring", "price-packaging": "packaging", "price-labor": "labor" };
+    ids.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener("input", () => {
+        state.pricing[keys[id]] = Number(el.value || 0);
+        updatePricingResults();
+      });
+    });
+    const marginEl = document.getElementById("price-margin");
+    if (marginEl) marginEl.addEventListener("input", () => {
+      state.pricing.margin = Number(marginEl.value);
+      document.getElementById("margin-display").textContent = state.pricing.margin + "%";
+      updatePricingResults();
+    });
+  }
+}
+
+function updatePricingResults() {
+  const p = state.pricing;
+  const cost = Number(p.acrylic || 0) + Number(p.ring || 0) + Number(p.packaging || 0) + Number(p.labor || 0);
+  const price = p.margin < 100 ? cost / (1 - p.margin / 100) : cost;
+  const profit = price - cost;
+  document.getElementById("price-cost").textContent = peso(cost);
+  document.getElementById("price-retail").textContent = peso(price);
+  document.getElementById("price-profit").textContent = peso(profit);
+}
+
+/* ================= Action handlers (event delegation) ================= */
+const handlers = {
+  "go-page": (id) => { state.page = id; state.sidebarOpen = false; render(); },
+  "toggle-sidebar": () => { state.sidebarOpen = !state.sidebarOpen; render(); },
+
+  "toggle-employee-form": () => { state.showEmployeeForm = !state.showEmployeeForm; render(); },
+  "cancel-employee-form": () => { state.showEmployeeForm = false; render(); },
+  "add-employee": () => {
+    const name = document.getElementById("emp-name").value.trim();
+    const role = document.getElementById("emp-role").value;
+    const rate = document.getElementById("emp-rate").value;
+    const status = document.getElementById("emp-status").value;
+    if (!name || !rate) return;
+    state.employees.push({ id: uid(), name, role, rate: Number(rate), cadence: "/day", status });
+    state.showEmployeeForm = false;
+    render();
+  },
+  "toggle-employee-status": (id) => {
+    const emp = state.employees.find(e => e.id === id);
+    if (emp) emp.status = emp.status === "Paid" ? "Pending" : "Paid";
+    render();
+  },
+  "remove-employee": (id) => { state.employees = state.employees.filter(e => e.id !== id); render(); },
+
+  "toggle-event-form": () => { state.showEventForm = !state.showEventForm; render(); },
+  "cancel-event-form": () => { state.showEventForm = false; render(); },
+  "add-event": () => {
+    const title = document.getElementById("ev-title").value.trim();
+    const date = document.getElementById("ev-date").value;
+    const type = document.getElementById("ev-type").value;
+    if (!title || !date) return;
+    state.events.push({ id: uid(), title, date, type });
+    state.showEventForm = false;
+    render();
+  },
+  "remove-event": (id) => { state.events = state.events.filter(e => e.id !== id); render(); },
+  "adopt-idea": (id) => {
+    if (state.adoptedGanap.includes(id)) return;
+    const idea = ganapIdeas.find(g => g.id === id);
+    state.events.push({ id: uid(), title: idea.title, date: "TBD", type: idea.tag });
+    state.adoptedGanap.push(id);
+    render();
+  },
+
+  "toggle-txn-form": () => { state.showTxnForm = !state.showTxnForm; render(); },
+  "cancel-txn-form": () => { state.showTxnForm = false; render(); },
+  "add-txn": () => {
+    const type = document.getElementById("txn-type").value;
+    const category = document.getElementById("txn-category").value.trim();
+    const description = document.getElementById("txn-description").value.trim();
+    const amount = document.getElementById("txn-amount").value;
+    const date = document.getElementById("txn-date").value || todayISO;
+    if (!category || !amount) return;
+    state.transactions.unshift({ id: uid(), type, category, description, amount: Number(amount), date });
+    state.showTxnForm = false;
+    render();
+  },
+  "remove-txn": (id) => { state.transactions = state.transactions.filter(t => t.id !== id); render(); },
+
+  "toggle-inventory-form": () => { state.showInventoryForm = !state.showInventoryForm; render(); },
+  "cancel-inventory-form": () => { state.showInventoryForm = false; render(); },
+  "add-inventory": () => {
+    const name = document.getElementById("inv-name").value.trim();
+    const stock = document.getElementById("inv-stock").value;
+    const max = document.getElementById("inv-max").value;
+    const unit = document.getElementById("inv-unit").value.trim() || "pcs";
+    const unitCost = document.getElementById("inv-cost").value;
+    if (!name || !stock || !max) return;
+    state.inventory.push({ id: uid(), name, stock: Number(stock), max: Number(max), unit, unitCost: Number(unitCost || 0) });
+    state.showInventoryForm = false;
+    render();
+  },
+  "remove-inventory": (id) => { state.inventory = state.inventory.filter(i => i.id !== id); render(); },
+};
+
+document.body.addEventListener("click", (e) => {
+  const btn = e.target.closest("[data-action]");
+  if (!btn) return;
+  const action = btn.dataset.action;
+  const id = btn.dataset.id;
+  if (handlers[action]) handlers[action](id);
+});
+document.getElementById("menu-btn").addEventListener("click", () => handlers["toggle-sidebar"]());
+document.getElementById("sidebar-backdrop").addEventListener("click", () => handlers["toggle-sidebar"]());
+
+/* ================= Init ================= */
+render();
+</script>
+</body>
+</html>
