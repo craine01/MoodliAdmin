@@ -1,39 +1,5 @@
 
-  </div>
-);
 
-/* ------------------------------------------------------------------ */
-/*  Sidebar                                                             */
-/* ------------------------------------------------------------------ */
-const NAV_ITEMS = [
-  { key: "home", label: "Overview", icon: Home },
-  { key: "employees", label: "Employees & Payroll", icon: Users },
-  { key: "schedule", label: "Weekly Ganap Hub", icon: CalendarDays },
-  { key: "budget", label: "Kita vs. Gastos", icon: Wallet },
-  { key: "inventory", label: "Materials & Stock", icon: Boxes },
-  { key: "pricing", label: "Pricing Calculator", icon: Calculator },
-];
-
-function Sidebar({ page, setPage, open, setOpen }) {
-  return (
-    <>
-      {open && (
-        <div className="fixed inset-0 z-30 bg-black/20 md:hidden" onClick={() => setOpen(false)} />
-      )}
-      <aside
-        className={`fixed z-40 md:z-0 md:static top-0 left-0 h-full md:h-auto w-[260px] shrink-0 bg-[#F1EDE2] border-r border-[#E5DFCF] px-4 py-6 flex flex-col transition-transform duration-300 ${
-          open ? "translate-x-0" : "-translate-x-full md:translate-x-0"
-        }`}
-      >
-        <div className="flex items-center gap-3 px-2 mb-8">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#8FBC8F] text-white shadow-sm">
-            <Flower2 size={22} strokeWidth={2.2} />
-          </div>
-          <div>
-            <p className="font-display text-lg font-bold text-[#3D3B36] leading-none">Moodli</p>
-            <p className="text-[11px] text-[#8A8677] mt-1">Studio Admin</p>
-          </div>
-        </div>
 
         <nav className="flex-1 space-y-1">
           {NAV_ITEMS.map((item) => {
