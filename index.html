@@ -1,37 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
-<title>Business Studio Admin</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://unpkg.com/lucide@latest"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-  * { font-family: 'Nunito', 'Quicksand', sans-serif; }
-  .font-display { font-family: 'Fredoka', 'Nunito', sans-serif; }
-  body { background: #FAF9F6; color: #3D3B36; }
-  ::-webkit-scrollbar { width: 8px; height: 8px; }
-  ::-webkit-scrollbar-thumb { background: #E3DECF; border-radius: 999px; }
-  input[type="range"].sage-range { accent-color: #8FBC8F; }
-  .timeline-line::before {
-    content: ""; position: absolute; left: 7px; top: 4px; bottom: 4px; width: 2px; background: #E3DECF;
-  }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
-  .fade-in { animation: fadeIn .25s ease-out; }
-  @keyframes popIn { 0% { opacity: 0; transform: translateY(-6px) scale(.96); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
-  .toast-pop { animation: popIn .2s ease-out; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .spin { animation: spin 1s linear infinite; }
 
-  /* Mobile: iOS zooms in on inputs with font-size < 16px, so we force 16px on all inputs/selects */
-  input, select, textarea, button { font-size: 16px; }
-  @media (min-width: 640px) {
-    input, select, textarea { font-size: 14px; }
-  }
-  .touch-target { min-height: 44px; min-width: 44px; display: inline-flex; align-items: center; justify-content: center; }
-</style>
 </head>
 <body class="min-h-screen w-full">
 
