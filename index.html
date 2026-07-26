@@ -2,28 +2,7 @@
 
 
 
-    return { success: false, error: String(err) };
-  }
-}
-
-async function fetchAllFromSheet() {
-  if (!IS_CONNECTED) { setStatus("error"); return null; }
-  setStatus("syncing");
-  try {
-    const res = await fetch(`${API_URL}?action=list&_=${Date.now()}`, { method: "GET", cache: "no-store" });
-    const data = await res.json();
-    setStatus("saved");
-    return data;
-  } catch (err) {
-    console.error("fetchAllFromSheet failed:", err);
-    setStatus("error");
-    return null;
-  }
-}
-
-/* ================= State (seeded with sample data for preview) ================= */
-let state = {
-  page: "overview",
+    
   sidebarOpen: false,
   showPayrollForm: false,
   showGanapForm: false,
