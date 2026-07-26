@@ -1,79 +1,7 @@
 
 
 
-  <!-- Sidebar -->
-  <aside id="sidebar" class="fixed z-40 md:z-0 md:static top-0 left-0 h-full md:h-auto w-[260px] shrink-0 bg-[#F1EDE2] border-r border-[#E5DFCF] px-4 py-6 flex flex-col -translate-x-full md:translate-x-0 transition-transform duration-300">
-    <div class="flex items-center gap-3 px-2 mb-8">
-      <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#8FBC8F] text-white shadow-sm">
-        <i data-lucide="flower-2" style="width:22px;height:22px;stroke-width:2.2"></i>
-      </div>
-      <div>
-        <p class="font-display text-lg font-bold text-[#3D3B36] leading-none">Studio</p>
-        <p class="text-[11px] text-[#8A8677] mt-1">Business Admin</p>
-      </div>
-      <button id="sidebar-close-btn" class="ml-auto md:hidden touch-target text-[#8A8677]">
-        <i data-lucide="x" style="width:20px;height:20px"></i>
-      </button>
-    </div>
 
-    <nav id="sidebar-nav" class="flex-1 space-y-1"></nav>
-
-    <div class="mt-6 rounded-2xl bg-[#E8F0E6] p-4">
-      <p class="text-xs font-semibold text-[#4E6B4E] mb-1 flex items-center gap-1.5">
-        <i data-lucide="leaf" style="width:13px;height:13px"></i> Molding moods,
-      </p>
-      <p class="text-xs text-[#6B8E6B] leading-relaxed">one tiny keychain at a time. 🌿</p>
-    </div>
-  </aside>
-
-  <!-- Main -->
-  <div class="flex-1 min-w-0 flex flex-col">
-    <header class="sticky top-0 z-20 flex items-center gap-3 border-b border-[#EFEAE0] bg-[#FAF9F6]/90 backdrop-blur px-4 sm:px-5 py-3 sm:py-4">
-      <button id="menu-btn" class="md:hidden touch-target -ml-1.5 text-[#5C5A52]">
-        <i data-lucide="menu" style="width:22px;height:22px"></i>
-      </button>
-      <div class="flex-1 min-w-0">
-        <p class="text-xs text-[#9A9689]">Business Studio Admin</p>
-        <p id="header-title" class="font-display text-base font-semibold truncate"></p>
-      </div>
-      <div id="status-badge" class="hidden sm:flex items-center gap-1.5 rounded-full bg-[#E8F0E6] px-3 py-1.5 text-xs font-semibold text-[#4E6B4E]">
-        <i data-lucide="check" style="width:13px;height:13px"></i><span>Saved</span>
-      </div>
-      <div class="hidden sm:flex items-center gap-2 rounded-full border border-[#E3DECF] bg-white px-3.5 py-2 text-sm text-[#9A9689]">
-        <i data-lucide="search" style="width:15px;height:15px"></i>
-        <input id="global-search" placeholder="Search…" class="bg-transparent outline-none text-xs w-24 md:w-32 placeholder:text-[#9A9689]" />
-      </div>
-      <div class="h-9 w-9 rounded-full bg-[#8FBC8F] text-white flex items-center justify-center font-display font-semibold text-sm shrink-0">B</div>
-    </header>
-
-    <main id="app-main" class="flex-1 p-4 sm:p-7 max-w-[1400px] w-full mx-auto"></main>
-  </div>
-</div>
-
-<!-- Toast -->
-<div id="toast" class="fixed bottom-5 right-5 z-50 hidden"></div>
-
-<script>
-/* ================================================================
-   PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL HERE
-   (Deploy your Code.gs as a Web App, "Anyone" access, then paste
-   the resulting /exec URL below.)
-================================================================ */
-const API_URL = "https://script.google.com/macros/s/AKfycbyJsrJK9NDN42BmC3jNtw6RF_rgj5Vmy2SYeyStNtR5u2JylQYFt54BG4-KvnHD7xg_/exec";
-/* ================================================================ */
-
-const IS_CONNECTED = API_URL && !API_URL.includes("PASTE_YOUR_GOOGLE_APPS_SCRIPT_URL_HERE");
-
-/* ================= Helpers ================= */
-const peso = (n) => "₱" + Number(n || 0).toLocaleString("en-PH", { maximumFractionDigits: 2 });
-const uid = () => Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-4);
-const todayISO = new Date().toISOString().slice(0, 10);
-const fmtDate = (iso) => {
-  if (!iso) return "—";
-  const d = new Date(iso + "T00:00:00");
-  if (isNaN(d)) return iso;
-  return d.toLocaleDateString("en-PH", { month: "short", day: "numeric", year: "numeric" });
-};
 const icon = (name, cls = "", extra = "") => `<i data-lucide="${name}" class="${cls}" ${extra}></i>`;
 
 /* ================= Toast / status ================= */
