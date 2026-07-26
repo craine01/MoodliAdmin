@@ -97,10 +97,10 @@
    (Deploy your Code.gs as a Web App, "Anyone" access, then paste
    the resulting /exec URL below.)
 ================================================================ */
-const API_URL = "https://script.google.com/macros/s/AKfycbxXo3VvKoGIv7MBkmdJbHhgu4sqdj2dN6jZNCs1l72IP1iVGHq8Od3zmDaJ7nS5TcE/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzfHAKNzUGNyUfmhFr4dBsPO_TumogRoYgbTUdaUscC82_587So6BfiYZZfG-bYbdi9/exec";
 /* ================================================================ */
 
-const IS_CONNECTED = API_URL && !API_URL.includes("PASTE_YOUR_GOOGLE_APPS_SCRIPT_URL_HERE");
+const IS_CONNECTED = API_URL && !API_URL.includes("https://script.google.com/macros/s/AKfycbzfHAKNzUGNyUfmhFr4dBsPO_TumogRoYgbTUdaUscC82_587So6BfiYZZfG-bYbdi9/exec");
 
 /* ================= Helpers ================= */
 const peso = (n) => "₱" + Number(n || 0).toLocaleString("en-PH", { maximumFractionDigits: 2 });
