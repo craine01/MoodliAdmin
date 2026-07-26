@@ -1,30 +1,4 @@
-=== "TBD" ? -1 : a.date.localeCompare(b.date)));
-  const timeline = sorted.length === 0
-    ? `<p class="text-sm text-[#9A9689]">No events yet — add one above, or adopt a Ganap idea.</p>`
-    : sorted.map(ev => `
-      <div class="relative">
-        <span class="absolute -left-[26px] top-1.5 h-3.5 w-3.5 rounded-full bg-[#8FBC8F] ring-4 ring-[#E8F0E6]"></span>
-        <div class="flex items-start justify-between gap-3 rounded-2xl bg-[#FAF9F6] border border-[#EFEAE0] p-4">
-          <div>
-            <p class="text-xs font-semibold text-[#B4652E] mb-1">${fmtDate(ev.date)}</p>
-            <p class="text-sm font-medium text-[#3D3B36] leading-snug">${ev.title}</p>
-            <div class="mt-2">${badge(ev.type, TYPE_TONE[ev.type] || "sage")}</div>
-          </div>
-          <button data-action="remove-event" data-id="${ev.id}" class="text-[#C7C2B4] hover:text-[#B0503F] transition-colors shrink-0">
-            ${icon("trash-2", "", 'style="width:15px;height:15px"')}
-          </button>
-        </div>
-      </div>`).join("");
 
-  const ideas = ganapIdeas.map(idea => {
-    const isAdopted = state.adoptedGanap.includes(idea.id);
-    return `
-      <div class="rounded-2xl border border-[#EFEAE0] bg-[#FCFBF8] p-4">
-        <div class="flex items-center gap-2 mb-1.5">
-          <div class="flex h-7 w-7 items-center justify-center rounded-lg bg-[#E8F0E6] text-[#5F7A5F] shrink-0">
-            ${icon(idea.iconName, "", 'style="width:14px;height:14px"')}
-          </div>
-          ${badge(idea.tag, "clay")}
         </div>
         <p class="text-sm font-semibold text-[#3D3B36] leading-snug">${idea.title}</p>
         <p class="text-xs text-[#8A8677] mt-1 leading-relaxed">${idea.desc}</p>
