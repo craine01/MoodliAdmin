@@ -253,12 +253,12 @@ let state = {
 };
 
 const NAV_ITEMS = [
-  { key: "overview", label: "Overview", icon: "home", emoji: "🏠" },
-  { key: "payroll", label: "Weekly Payroll", icon: "users", emoji: "👥" },
-  { key: "ganap", label: "Ganap Hub", icon: "calendar-days", emoji: "📅" },
-  { key: "budget", label: "Kita vs Gastos", icon: "wallet", emoji: "💰" },
-  { key: "materials", label: "Materials & Stock", icon: "boxes", emoji: "📦" },
-  { key: "pricing", label: "Pricing Calculator", icon: "calculator", emoji: "🧮" },
+  { key: "overview", label: "Overview", icon: "home" },
+  { key: "payroll", label: "Weekly Payroll", icon: "users" },
+  { key: "ganap", label: "Ganap Hub", icon: "calendar-days" },
+  { key: "budget", label: "Kita vs Gastos", icon: "wallet" },
+  { key: "materials", label: "Materials & Stock", icon: "boxes"},
+  { key: "pricing", label: "Pricing Calculator", icon: "calculator"},
 ];
 
 const PRIORITY_TONE = { High: "warn", Medium: "clay", Low: "sage" };
@@ -317,9 +317,9 @@ const iconBtn = (name, action, id, colorCls) => `
 /* ================= Module 0: Overview ================= */
 function greetingForNow() {
   const hour = new Date().getHours();
-  if (hour < 12) return "Magandang umaga";
-  if (hour < 18) return "Magandang hapon";
-  return "Magandang gabi";
+  if (hour < 12) return "Good Morning";
+  if (hour < 18) return "Good Afternoon";
+  return "Good Evening";
 }
 
 function groupTransactionsByMonth(transactions) {
@@ -438,7 +438,7 @@ function renderOverview() {
             ${priorityNotifs}
             ${noReminders ? `<div class="flex items-start gap-2.5 rounded-2xl bg-[#E8F0E6] p-3">
               ${icon("check-circle-2", "mt-0.5 shrink-0 text-[#5F7A5F]", 'style="width:16px;height:16px"')}
-              <p class="text-sm text-[#4E6B4E] leading-snug">Walang urgent na bagay ngayon — malinis lahat! ✨</p>
+              <p class="text-sm text-[#4E6B4E] leading-snug">Walang urgent na bagay ngayon — malinis lahat! </p>
             </div>` : ""}
           </div>
         </div>`)}
