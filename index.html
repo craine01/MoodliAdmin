@@ -1,28 +1,4 @@
-
-      <div class="mt-4">
-        ${fieldLabel("Attendance this week")}
-        <div class="flex flex-wrap gap-3">
-          ${["mon", "tue", "wed", "thu", "fri", "sat", "sun"].map(d => `
-            <label class="flex items-center gap-1.5 rounded-xl border border-[#E3DECF] bg-[#FCFBF8] px-3 py-2 cursor-pointer">
-              <input type="checkbox" id="pr-${d}" ${["mon","tue","wed","thu","fri"].includes(d) ? "checked" : ""} class="accent-[#8FBC8F] h-4 w-4" />
-              <span class="text-xs font-semibold uppercase text-[#6B685F]">${d}</span>
-            </label>`).join("")}
-        </div>
-      </div>
-      <div class="mt-4 flex justify-end gap-2 flex-wrap">
-        ${ghostBtn("Cancel", "cancel-payroll-form")}
-        ${primaryBtn("Save Employee", "add-payroll", "check")}
-      </div>
-    </div>`, "mb-5") : "";
-
-  const rows = state.payroll.map(p => {
-    const calc = computePayroll(p);
-    return `
-    <tr class="border-t border-[#EFEAE0] hover:bg-[#FAF9F6] transition-colors">
-      <td class="px-4 sm:px-5 py-3.5 font-medium text-[#3D3B36] whitespace-nowrap">${p.name}</td>
-      <td class="px-4 sm:px-5 py-3.5 text-[#6B685F] whitespace-nowrap">${peso(p.dailyRate)}/day</td>
-      <td class="px-4 sm:px-5 py-3.5 text-[#6B685F] whitespace-nowrap">${calc.daysPresent} / 7 days</td>
-      <td class="px-4 sm:px-5 py-3.5 text-[#6B685F] whitespace-nowrap">${p.overtimeHours || 0} hrs</td>
+   <td class="px-4 sm:px-5 py-3.5 text-[#6B685F] whitespace-nowrap">${p.overtimeHours || 0} hrs</td>
       <td class="px-4 sm:px-5 py-3.5 text-[#B4652E] whitespace-nowrap">−${peso(p.deductions)}</td>
       <td class="px-4 sm:px-5 py-3.5 font-semibold text-[#6B685F] whitespace-nowrap">${peso(calc.grossPay)}</td>
       <td class="px-4 sm:px-5 py-3.5 font-bold text-[#4E6B4E] whitespace-nowrap">${peso(calc.netPay)}</td>
