@@ -688,31 +688,6 @@ const handlers = {
     const entry = { id: uid(), label, materialsCost: p.materialsCost, laborCost: p.laborCost, overheadCost: p.overheadCost, margin: p.margin, retailPrice };
     state.pricingHistory.unshift(entry);
     p.savedPrice = retailPrice;
-    p.savedLabel = label;
-    render();
-    await sendToSheet("pricing", "add", { ...entry, dateSaved: todayISO });
-  },
-};
-
-document.body.addEventListener("click", (e) => {
-  const btn = e.target.closest("[data-action]");
-  if (!btn) return;
-  const action = btn.dataset.action;
-  const id = btn.dataset.id;
-  if (handlers[action]) handlers[action](id);
-});
-document.getElementById("menu-btn").addEventListener("click", () => handlers["toggle-sidebar"]());
-document.getElementById("sidebar-backdrop").addEventListener("click", () => handlers["toggle-sidebar"]());
-document.getElementById("sidebar-close-btn").addEventListener("click", () => handlers["toggle-sidebar"]());
-
-/* ================= Init: try to load real data from Google Sheets ================= */
-async function init() {
-  render();
-  if (!IS_CONNECTED) { setStatus("error"); return; }
-  const data = await fetchAllFromSheet();
-  if (data) {
-    if (Array.isArray(data.payroll) && data.payroll.length) state.payroll = data.payroll;
-    if (Array.isArray(data.ganap) && data.ganap.length) state.ganap = data.ganap;
     if (Array.isArray(data.budget) && data.budget.length) state.transactions = data.budget;
     if (Array.isArray(data.materials) && data.materials.length) state.materials = data.materials;
     if (Array.isArray(data.pricing) && data.pricing.length) state.pricingHistory = data.pricing;
