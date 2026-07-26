@@ -93,62 +93,7 @@ function renderBudget() {
       </td>
     </tr>`).join("");
 
-  return `
-    <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
-      ${sectionTitle("wallet", "Kita vs. Gastos Tracker", "Log every peso in and out of the studio.")}
-      ${primaryBtn(state.showTxnForm ? "Close" : "Add Entry", "toggle-txn-form", "plus")}
-    </div>
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5">
-      ${card(`<div class="p-5">
-        <div class="flex items-center gap-2 text-[#5F7A5F] mb-2">${icon("trending-up", "", 'style="width:16px;height:16px"')}<p class="text-xs font-semibold uppercase tracking-wide text-[#9A9689]">Total Kita (Income)</p></div>
-        <p class="font-display text-2xl font-bold text-[#3D3B36]">${peso(totalIncome)}</p></div>`)}
-      ${card(`<div class="p-5">
-        <div class="flex items-center gap-2 text-[#B4652E] mb-2">${icon("trending-down", "", 'style="width:16px;height:16px"')}<p class="text-xs font-semibold uppercase tracking-wide text-[#9A9689]">Total Gastos (Expenses)</p></div>
-        <p class="font-display text-2xl font-bold text-[#3D3B36]">${peso(totalExpense)}</p></div>`)}
-      ${card(`<div class="p-5">
-        <div class="flex items-center gap-2 text-[#4E6B4E] mb-2">${icon("dollar-sign", "", 'style="width:16px;height:16px"')}<p class="text-xs font-semibold uppercase tracking-wide text-[#6B8E6B]">Net Profit</p></div>
-        <p class="font-display text-2xl font-bold text-[#3D3B36]">${peso(netProfit)}</p></div>`, "bg-[#E8F0E6]/60 border-[#D5E5D0]")}
-    </div>
-    ${formHtml}
-    ${card(`<div class="overflow-x-auto">
-      <table class="w-full text-sm">
-        <thead><tr class="bg-[#F1EDE2] text-left text-xs font-semibold uppercase tracking-wide text-[#8A8677]">
-          <th class="px-5 py-3">Date</th><th class="px-5 py-3">Category</th><th class="px-5 py-3">Description</th>
-          <th class="px-5 py-3 text-right">Amount</th><th class="px-5 py-3 text-right">Actions</th>
-        </tr></thead>
-        <tbody>${rows}</tbody>
-      </table>
-    </div>`)}`;
-}
-
-function renderInventory() {
-  const formHtml = state.showInventoryForm ? card(`
-    <div class="p-5 fade-in">
-      <div class="grid grid-cols-1 sm:grid-cols-5 gap-4">
-        <div>${fieldLabel("Item Name")}<input id="inv-name" class="${inputCls}" placeholder="e.g. Ribbon Spools" /></div>
-        <div>${fieldLabel("Current Stock")}<input id="inv-stock" type="number" class="${inputCls}" placeholder="0" /></div>
-        <div>${fieldLabel("Full Stock Level")}<input id="inv-max" type="number" class="${inputCls}" placeholder="100" /></div>
-        <div>${fieldLabel("Unit")}<input id="inv-unit" class="${inputCls}" placeholder="pcs" /></div>
-        <div>${fieldLabel("Unit Cost (₱)")}<input id="inv-cost" type="number" class="${inputCls}" placeholder="0" /></div>
-      </div>
-      <div class="mt-4 flex justify-end gap-2">
-        ${ghostBtn("Cancel", "cancel-inventory-form")}
-        ${primaryBtn("Save Item", "add-inventory", "check")}
-      </div>
-    </div>`, "mb-5") : "";
-
-  const items = state.inventory.map(item => {
-    const pct = Math.min(100, Math.round((item.stock / item.max) * 100));
-    const low = pct < 30;
-    return card(`<div class="p-5">
-      <div class="flex items-start justify-between mb-3">
-        <div>
-          <p class="font-semibold text-[#3D3B36]">${item.name}</p>
-          <p class="text-xs text-[#9A9689] mt-0.5">${peso(item.unitCost)} / ${item.unit}</p>
-        </div>
-        <div class="flex items-center gap-2">
-          ${low ? badge("Low Stock", "warn", "alert-triangle") : badge("Healthy", "sage")}
-          <button data-action="remove-inventory" data-id="${item.id}" class="text-[#C7C2B4] hover:text-[#B0503F] transition-colors">
+  y" data-id="${item.id}" class="text-[#C7C2B4] hover:text-[#B0503F] transition-colors">
             ${icon("trash-2", "", 'style="width:15px;height:15px"')}
           </button>
         </div>
