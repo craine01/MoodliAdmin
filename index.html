@@ -1,34 +1,5 @@
  
-
-        <p id="header-title" class="font-display text-base font-semibold truncate"></p>
-      </div>
-      <div id="status-badge" class="hidden sm:flex items-center gap-1.5 rounded-full bg-[#E8F0E6] px-3 py-1.5 text-xs font-semibold text-[#4E6B4E]">
-        <i data-lucide="check" style="width:13px;height:13px"></i><span>Saved</span>
-      </div>
-      <div class="hidden sm:flex items-center gap-2 rounded-full border border-[#E3DECF] bg-white px-3.5 py-2 text-sm text-[#9A9689]">
-        <i data-lucide="search" style="width:15px;height:15px"></i>
-        <input id="global-search" placeholder="Search…" class="bg-transparent outline-none text-xs w-24 md:w-32 placeholder:text-[#9A9689]" />
-      </div>
-      <div class="h-9 w-9 rounded-full bg-[#8FBC8F] text-white flex items-center justify-center font-display font-semibold text-sm shrink-0">B</div>
-    </header>
-
-    <main id="app-main" class="flex-1 p-4 sm:p-7 max-w-[1400px] w-full mx-auto"></main>
-  </div>
-</div>
-
-<!-- Toast -->
-<div id="toast" class="fixed bottom-5 right-5 z-50 hidden"></div>
-
-<script>
-/* ================================================================
-   PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL HERE
-   (Deploy your Code.gs as a Web App, "Anyone" access, then paste
-   the resulting /exec URL below.)
-================================================================ */
-const API_URL = "https://script.google.com/macros/s/AKfycbxI3HNIK2UbVAngy2pp185cF2aOYjP7i4a8McB-hrI-Orfj8kHfYUeURp_J_Q9Qm5jv/exec";
-/* ================================================================ */
-
-const IS_CONNECTED = API_URL && !API_URL.includes("PASTE_YOUR_GOOGLE_APPS_SCRIPT_URL_HERE");
+APPS_SCRIPT_URL_HERE");
 
 /* ================= Helpers ================= */
 const peso = (n) => "₱" + Number(n || 0).toLocaleString("en-PH", { maximumFractionDigits: 2 });
