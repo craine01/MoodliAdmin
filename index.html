@@ -835,7 +835,7 @@ function updatePricingResults() {
    Every handler that adds/removes real data calls sendToSheet(...) so the
    change is POSTed to your Google Sheet through Code.gs. e.preventDefault()
    equivalent: we never use a real <form> tag, all buttons are type="button"
-   handled purely via JS, so there is never a page reload on save. */
+   handled purely via JS, so there is never a page reload on save. not me saying stuff idk*/
 const handlers = {
   "go-page": (id) => { state.page = id; state.sidebarOpen = false; render(); },
   "toggle-sidebar": () => { state.sidebarOpen = !state.sidebarOpen; render(); },
